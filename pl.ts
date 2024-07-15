@@ -111,9 +111,15 @@ const getCentroidCell = (polygon: Polygon, points: Array<PointTuple>) => {
   return new Cell({ x: c.x / area, y: c.y / area}, 0, polygon)
 };
 
-const polylabel = (polygon: Array<Array<PointTuple>>, precision = 1, debug = false) => {
-  const firstItem = polygon[0];
-  const envelope = {
+const getGeometry = (array: Array<PointTuple>) => {
+  return array.reduce((acc, [x, y]) => {
+    (x < acc.min.x) && (acc.min.x = x);
+    (y < acc.min.y) && (acc.min.y = y);
+    (x > acc.max.x) && (acc.max.x = x);
+    (y > acc.max.y) && (acc.max.y = y);
+
+    return acc;
+  }, {
     min: {
       x: Infinity,
       y: Infinity,
@@ -122,27 +128,11 @@ const polylabel = (polygon: Array<Array<PointTuple>>, precision = 1, debug = fal
       x: 0,
       y: 0,
     }
-  };
+  })
+}
 
-  firstItem.reduce((acc: typeof envelope, [x, y]) => {
-    if (x < acc.min.x) {
-      acc.min.x = x
-    }
-
-    if (y < acc.min.y) {
-      acc.min.y = y
-    }
-
-    if (x > acc.max.x) {
-      acc.max.x = x
-    }
-
-    if (y > acc.max.y) {
-      acc.max.y = y
-    }
-
-    return acc;
-  }, envelope)
+const polylabel = (polygon: Array<Array<PointTuple>>, precision = 1, debug = false) => {
+  const envelope = getGeometry(polygon[0]);
 
   const size = {
     x: envelope.max.x - envelope.min.x,
