@@ -1,9 +1,7 @@
 import PriorityQueue from "./priority-queue.js";
 
-interface PointTuple extends Array<number> {
-  0: number,
-  1: number,
-};
+type PointTuple = [number, number];
+
 interface Polygon extends Array<Array<PointTuple>> {}
 interface Point {
   x: number;
